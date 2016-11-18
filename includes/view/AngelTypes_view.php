@@ -146,21 +146,13 @@ function AngelType_view($angeltype, $members, $user_angeltype, $admin_user_angel
       $members_confirmed[] = $member;
     }
   }
-if ($enable_dect) {
-  $table_headers = [
+
+	$table_headers = [
       'Nick' => _("Nick"),
-      'DECT' => _("DECT"),
-      'actions' => ''
-  ];
-}
-else
-{
-	  $table_headers = [
-      'Nick' => _("Nick"),
-	  'DECT' => _("Sum"),
+	  'DECT' => _($enable_dect ? "DECT" : "Sum"),
       'actions' => ''
 	];
-}
+	
   if ($angeltype['requires_driver_license'] && ($coordinator || $admin_angeltypes)) {
     $table_headers = [
         'Nick' => _("Nick"),
