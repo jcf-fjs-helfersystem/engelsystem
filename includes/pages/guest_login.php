@@ -281,6 +281,8 @@ function guest_logout() {
 }
 
 function guest_login() {
+	  global $enable_angeltypedescription;
+
   $nick = "";
 
   unset($_SESSION['uid']);
@@ -346,12 +348,11 @@ function guest_login() {
               div('col-md-4', [
                   heading(register_title(), 2),
                   get_register_hint(),
-				  // !!! WURDE MANUELL ENTFERNT !!
-                  //heading(_("What can I do?"), 2),
-                  //'<p>' . _("Please read about the jobs you can do to help us.") . '</p>',
-                  //buttons([
-                  //    button(page_link_to('angeltypes') . '&action=about', _("Teams/Job description") . ' &raquo;')
-                  //])
+                  $enable_angeltypedescription ? heading(_("What can I do?"), 2) : '',
+                  $enable_angeltypedescription ? '<p>' . _("Please read about the jobs you can do to help us.") . '</p>' : '',
+                  $enable_angeltypedescription ? buttons([
+                      button(page_link_to('angeltypes') . '&action=about', _("Teams/Job description") . ' &raquo;')
+                  ]) : ''
               ])
           ])
       ])
