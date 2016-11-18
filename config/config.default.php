@@ -29,19 +29,22 @@ define('CRYPT_ALG', '$6$rounds=5000'); // SHA-512
 
 define('MIN_PASSWORD_LENGTH', 8);
 
+// Things that can be hidden during the registration process:
+$enable_description_jobs = false;
+
+//Things that can be hidden everywhere (still in the database and in "Admin sets user properties"-pages)
 // Wenn Engel beim Registrieren oder in ihrem Profil eine T-Shirt Größe angeben sollen, auf true setzen:
 $enable_tshirt_size = true;
-$enable_dect = true;
-$enable_jabber = true;
-$enable_planned_arrival_date = true;
-$enable_emailcheckbox = true;
 $enable_First_Last_Name = true;
-$enable_Hometown = true;
-$enable_description_jobs = true;
-$enable_age = true;
-$enable_phone = true;
-$enable_angeltypedescription = true;
+$enable_emailcheckbox = false;
+$enable_dect = false;
+$enable_jabber = false;
+$enable_planned_arrival_date = false;
+$enable_Hometown = false;
+$enable_age = false;
+$enable_phone = false;
 $enable_unnecessary_Notifications = false;
+$enable_angeltypedescription = false;
 
 // Number of shifts to freeload until angel is locked for shift signup.
 $max_freeloadable_shifts = 2;
