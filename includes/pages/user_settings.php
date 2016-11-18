@@ -182,7 +182,7 @@ function user_settings() {
               form([
                   form_info('', _("Here you can change your user details.")),
                   form_info(entry_required() . ' = ' . _("Entry required!")),
-                  form_text('nick', _("Nick"), $nick, true),
+                  form_text('nick', _("Login-Name"), $nick, true),
                   form_text('lastname', _("Last name"), $lastname),
                   form_text('prename', _("First name"), $prename),
                   $enable_planned_arrival_date ? form_date('planned_arrival_date', _("Planned date of arrival"), $planned_arrival_date, time()) : '',
