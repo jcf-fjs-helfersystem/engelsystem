@@ -207,7 +207,9 @@ function sql_select_single_col($query) {
 }
 
 function sql_select_single_cell($query) {
-  return array_shift(array_shift(sql_select($query)));
+  $topassasreference = sql_select($query);
+  $topassasreference_again = array_shift($topassasreference);
+  return array_shift($topassasreference_again);
 }
 
 ?>
