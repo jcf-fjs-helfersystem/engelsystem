@@ -29,7 +29,10 @@ define('CRYPT_ALG', '$6$rounds=5000'); // SHA-512
 
 define('MIN_PASSWORD_LENGTH', 8);
 
-// Things that can be hidden during the registration process:
+// Things that can be hidden on the start page, set true to show:
+$enable_angeltypedescription = false;
+
+// Things that can be hidden during the registration process, set true to show:
 $enable_description_jobs = false;
 
 //Things that can be hidden everywhere (still in the database and in "Admin sets user properties"-pages)
@@ -44,7 +47,6 @@ $enable_Hometown = false;
 $enable_age = false;
 $enable_phone = false;
 $enable_unnecessary_Notifications = false;
-$enable_angeltypedescription = false;
 
 // Number of shifts to freeload until angel is locked for shift signup.
 $max_freeloadable_shifts = 2;

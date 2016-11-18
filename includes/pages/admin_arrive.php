@@ -142,7 +142,7 @@ function admin_arrive() {
           form_submit('submit', _("Search")) 
       ]),
       table([
-          'nick' => _("Nickname"),
+          'nick' => _("Login-Name"),
           'rendered_planned_arrival_date' => _("Planned arrival"),
           'arrived' => _("Arrived?"),
           'rendered_arrival_date' => _("Arrival date"),

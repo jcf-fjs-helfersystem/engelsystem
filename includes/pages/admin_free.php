@@ -5,7 +5,7 @@ function admin_free_title() {
 }
 
 function admin_free() {
-  global $privileges;
+  global $privileges, $enable_dect, $enable_jabber;
   
   $search = "";
   if (isset($_REQUEST['search'])) {
@@ -65,9 +65,8 @@ function admin_free() {
     $free_users_table[] = [
         'name' => User_Nick_render($usr),
         'shift_state' => User_shift_state_render($usr),
-        // !! MANUELL entfernt !!
-		// 'dect' => $usr['DECT'],
-        // 'jabber' => $usr['jabber'],
+		'dect' => $usr['DECT'],
+        'jabber' => $usr['jabber'],
         'email' => $usr['email'],
         'actions' => in_array('admin_user', $privileges) ? button(page_link_to('admin_user') . '&amp;id=' . $usr['UID'], _("edit"), 'btn-xs') : '' 
     ];
@@ -89,15 +88,21 @@ function admin_free() {
               ]) 
           ]) 
       ]),
-      table([
-          'name' => _("Nick"),
+	  $enable_dect ? table([
+          'name' => _("Login-Name"),
           'shift_state' => '',
-          // !! MANUELL entfernt !! 
-		  // 'dect' => _("DECT"),
-          // 'jabber' => _("Jabber"),
+		  'dect' => _("DECT"),
+          'jabber' => _("Jabber"),
           'email' => _("E-Mail"),
           'actions' => '' 
       ], $free_users_table) 
+	  :
+	  table([
+          'name' => _("Login-Name"),
+          'shift_state' => '',
+          'email' => _("E-Mail"),
+          'actions' => '' 
+      ], $free_users_table)
   ]);
 }
 ?>
