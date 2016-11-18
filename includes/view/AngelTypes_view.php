@@ -66,6 +66,7 @@ function AngelType_edit_view($name, $restricted, $description, $coordinator_mode
 }
 
 function AngelType_view($angeltype, $members, $user_angeltype, $admin_user_angeltypes, $admin_angeltypes, $coordinator, $user_driver_license, $user) {
+global $enable_dect;
   $buttons = [
       button(page_link_to('angeltypes'), _("Helpertypes"), 'back')
   ];
@@ -148,7 +149,7 @@ function AngelType_view($angeltype, $members, $user_angeltype, $admin_user_angel
   }
 
 	$table_headers = [
-      'Nick' => _("Nick"),
+      'Nick' => _("Login-Name"),
 	  'DECT' => _($enable_dect ? "DECT" : "Sum"),
       'actions' => ''
 	];
