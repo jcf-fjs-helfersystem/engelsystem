@@ -184,7 +184,7 @@ function admin_active() {
       ]) : $set_active,
       msg(),
       table([
-          'nick' => _("Nickname"),
+          'nick' => _("Login-Name"),
           'shirt_size' => _("Size"),
           'shift_count' => _("Shifts"),
           'work_time' => _("Length"),

@@ -89,7 +89,7 @@ function admin_free() {
           ]) 
       ]),
 	  $enable_dect ? table([
-          'name' => _("Nick"),
+          'name' => _("Login-Name"),
           'shift_state' => '',
 		  'dect' => _("DECT"),
           'jabber' => _("Jabber"),
@@ -98,7 +98,7 @@ function admin_free() {
       ], $free_users_table) 
 	  :
 	  table([
-          'name' => _("Nick"),
+          'name' => _("Login-Name"),
           'shift_state' => '',
           'email' => _("E-Mail"),
           'actions' => '' 
