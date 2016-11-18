@@ -23,6 +23,7 @@ $tshirt_sizes = [
  * Displays the welcome message to the user and shows a login form.
  */
 function User_registration_success_view($event_welcome_message) {
+	global $enable_angeltypedescription, $enable_dect;
   $parsedown = new Parsedown();
   $event_welcome_message = $parsedown->text($event_welcome_message);
   return page_with_title(_("Registration successful"), [
@@ -43,14 +44,13 @@ function User_registration_success_view($event_welcome_message) {
                   info(_("Please note: You have to activate cookies!"), true) 
               ], page_link_to('login')) 
           ]),
-          // !!! MANUELL ENTFERNT !!!
-		  //div('col-md-4', [
-          //    '<h2>' . _("What can I do?") . '</h2>',
-          //    '<p>' . _("Please read about the jobs you can do to help us.") . '</p>',
-          //    buttons([
-          //        button(page_link_to('angeltypes') . '&action=about', _("Teams/Job description") . ' &raquo;') 
-          //    ]) 
-        //  ]) 
+		  div('col-md-4', [
+              $enable_angeltypedescription ? '<h2>' . _("What can I do?") . '</h2>' : '',
+              $enable_angeltypedescription ? '<p>' . _("Please read about the jobs you can do to help us.") . '</p>' : '',
+              $enable_angeltypedescription ? buttons([
+                  button(page_link_to('angeltypes') . '&action=about', _("Teams/Job description") . ' &raquo;') 
+              ]) : '' 
+          ]) 
       ]) 
   ]);
 }
@@ -120,7 +120,7 @@ function Users_view($users, $order_by, $arrived_count, $active_count, $force_act
           button(page_link_to('register'), glyph('plus') . _('New user')) 
       ]),
       $enable_dect ? table([
-          'Nick' => Users_table_header_link('Nick', _('Nick'), $order_by),
+          'Nick' => Users_table_header_link('Nick', _('Login-Name'), $order_by),
           'Vorname' => Users_table_header_link('Vorname', _('Prename'), $order_by),
           'Name' => Users_table_header_link('Name', _('Name'), $order_by),
           'DECT' => Users_table_header_link('DECT', _('DECT'), $order_by),
@@ -136,10 +136,9 @@ function Users_view($users, $order_by, $arrived_count, $active_count, $force_act
       ], $users) 
 :
 		table([
-          'Nick' => Users_table_header_link('Nick', _('Nick'), $order_by),
+          'Nick' => Users_table_header_link('Nick', _('Login-Name'), $order_by),
           'Vorname' => Users_table_header_link('Vorname', _('Prename'), $order_by),
           'Name' => Users_table_header_link('Name', _('Name'), $order_by),
-          //'DECT' => Users_table_header_link('DECT', _('DECT'), $order_by),
           'Gekommen' => Users_table_header_link('Gekommen', _('Arrived'), $order_by),
           'got_voucher' => Users_table_header_link('got_voucher', _('Voucher'), $order_by),
           'freeloads' => _('Freeloads'),
