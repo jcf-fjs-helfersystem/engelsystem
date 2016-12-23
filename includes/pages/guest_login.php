@@ -214,16 +214,15 @@ function guest_register() {
                       ]),
                       div('col-sm-8', [
                           form_email('mail', _("E-Mail") . ' ' . entry_required(), $mail),
-                          if ($enable_emailcheckbox) {
-                            form_checkbox('email_shiftinfo', _("The engelsystem is allowed to send me an email (e.g. when my shifts change)"), $email_shiftinfo),
-                            form_checkbox('email_by_human_allowed', _("Humans are allowed to send me an email (e.g. for ticket vouchers)"), $email_by_human_allowed)
-                          }
+                          $enable_emailcheckbox ? form_checkbox('email_shiftinfo', _("The engelsystem is allowed to send me an email (e.g. when my shifts change)"), $email_shiftinfo) : ''
+                          ,
+                          $enable_emailcheckbox ? form_checkbox('email_by_human_allowed', _("Humans are allowed to send me an email (e.g. for ticket vouchers)"), $email_by_human_allowed) : ''
                       ]) 
                   ]),
                   div('row', [
-                      div('col-sm-6', [
+                      $enable_planned_arrival_date ? div('col-sm-6', [
                           form_date('planned_arrival_date', _("Planned date of arrival") . ' ' . entry_required(), $planned_arrival_date, time()) 
-                      ]),
+                      ]) : '' ,
                       div('col-sm-6', [
                           $enable_tshirt_size ? form_select('tshirt_size', _("Shirt size") . ' ' . entry_required(), $tshirt_sizes, $tshirt_size) : '' 
                       ]) 
@@ -236,10 +235,10 @@ function guest_register() {
                           form_password('password2', _("Confirm password") . ' ' . entry_required()) 
                       ]) 
                   ]),
-                  form_checkboxes('angel_types', _("What do you want to do?") . sprintf(" (<a href=\"%s\">%s</a>)", page_link_to('angeltypes') . '&action=about', _("Description of job types")), $angel_types, $selected_angel_types),
-                  form_info("", _("Restricted angel types need will be confirmed later by a supporter. You can change your selection in the options section.")) 
-              ]),
-              div('col-md-6', [
+#                  form_checkboxes('angel_types', _("What do you want to do?") . sprintf(" (<a href=\"%s\">%s</a>)", page_link_to('angeltypes') . '&action=about', _("Description of job types")), $angel_types, $selected_angel_types),
+#                  form_info("", _("Restricted angel types need will be confirmed later by a supporter. You can change your selection in the options section.")) 
+#              ]),
+#              div('col-md-6', [
                   div('row', [
                       div('col-sm-7', [
                         form_text('mobile', _("Cellphone (for Whatsapp-Helper-Group)"), $mobile)
@@ -284,7 +283,7 @@ function guest_logout() {
 }
 
 function guest_login() {
-	  global $enable_angeltypedescription;
+  global $enable_angeltypedescription;
 
   $nick = "";
 
