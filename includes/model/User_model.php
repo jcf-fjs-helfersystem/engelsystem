@@ -1,4 +1,5 @@
 <?php
+use Engelsystem\ValidationResult;
 
 /**
  * User model
@@ -29,6 +30,7 @@ function User_update($user) {
       `Handy`='" . sql_escape($user['Handy']) . "',
       `email`='" . sql_escape($user['email']) . "',
       `email_shiftinfo`=" . sql_bool($user['email_shiftinfo']) . ",
+      `email_by_human_allowed`=" . sql_bool($user['email_by_human_allowed']) . ",
       `jabber`='" . sql_escape($user['jabber']) . "',
       `Size`='" . sql_escape($user['Size']) . "',
       `Gekommen`='" . sql_escape($user['Gekommen']) . "',
@@ -40,7 +42,8 @@ function User_update($user) {
       `Hometown`='" . sql_escape($user['Hometown']) . "',
       `got_voucher`='" . sql_escape($user['got_voucher']) . "',
       `arrival_date`='" . sql_escape($user['arrival_date']) . "',
-      `planned_arrival_date`='" . sql_escape($user['planned_arrival_date']) . "'
+      `planned_arrival_date`='" . sql_escape($user['planned_arrival_date']) . "',
+      `planned_departure_date`=" . sql_null($user['planned_departure_date']) . "
       WHERE `UID`='" . sql_escape($user['UID']) . "'");
 }
 
@@ -113,12 +116,16 @@ function User_is_freeloader($user) {
  * @param Angeltype $angeltype          
  */
 function Users_by_angeltype_inverted($angeltype) {
-  return sql_select("
+  $result = sql_select("
       SELECT `User`.*
       FROM `User`
       LEFT JOIN `UserAngelTypes` ON (`User`.`UID`=`UserAngelTypes`.`user_id` AND `angeltype_id`='" . sql_escape($angeltype['id']) . "')
       WHERE `UserAngelTypes`.`id` IS NULL
       ORDER BY `Nick`");
+  if ($result === false) {
+    engelsystem_error("Unable to load users.");
+  }
+  return $result;
 }
 
 /**
@@ -127,18 +134,22 @@ function Users_by_angeltype_inverted($angeltype) {
  * @param Angeltype $angeltype          
  */
 function Users_by_angeltype($angeltype) {
-  return sql_select("
+  $result = sql_select("
       SELECT
       `User`.*,
       `UserAngelTypes`.`id` as `user_angeltype_id`,
       `UserAngelTypes`.`confirm_user_id`,
-      `UserAngelTypes`.`coordinator`,
+      `UserAngelTypes`.`supporter`,
       `UserDriverLicenses`.*
       FROM `User`
       JOIN `UserAngelTypes` ON `User`.`UID`=`UserAngelTypes`.`user_id`
       LEFT JOIN `UserDriverLicenses` ON `User`.`UID`=`UserDriverLicenses`.`user_id`
       WHERE `UserAngelTypes`.`angeltype_id`='" . sql_escape($angeltype['id']) . "'
       ORDER BY `Nick`");
+  if ($result === false) {
+    engelsystem_error("Unable to load members.");
+  }
+  return $result;
 }
 
 /**
@@ -158,6 +169,96 @@ function User_validate_Nick($nick) {
 }
 
 /**
+ * Validate user email address.
+ *
+ * @param string $mail
+ *          The email address to validate
+ * @return ValidationResult
+ */
+function User_validate_mail($mail) {
+  $mail = strip_item($mail);
+  return new ValidationResult(check_email($mail), $mail);
+}
+
+/**
+ * Validate user jabber address
+ *
+ * @param string $jabber
+ *          Jabber-ID to validate
+ * @return ValidationResult
+ */
+function User_validate_jabber($jabber) {
+  $jabber = strip_item($jabber);
+  if ($jabber == '') {
+    // Empty is ok
+    return new ValidationResult(true, '');
+  }
+  return new ValidationResult(check_email($jabber), $jabber);
+}
+
+/**
+ * Validate the planned arrival date
+ *
+ * @param int $planned_arrival_date
+ *          Unix timestamp
+ * @return ValidationResult
+ */
+function User_validate_planned_arrival_date($planned_arrival_date) {
+  if ($planned_arrival_date == null) {
+    // null is not okay
+    return new ValidationResult(false, time());
+  }
+  $event_config = EventConfig();
+  if ($event_config == null) {
+    // Nothing to validate against
+    return new ValidationResult(true, $planned_arrival_date);
+  }
+  if (isset($event_config['buildup_start_date']) && $planned_arrival_date < $event_config['buildup_start_date']) {
+    // Planned arrival can not be before buildup start date
+    return new ValidationResult(false, $event_config['buildup_start_date']);
+  }
+  if (isset($event_config['teardown_end_date']) && $planned_arrival_date > $event_config['teardown_end_date']) {
+    // Planned arrival can not be after teardown end date
+    return new ValidationResult(false, $event_config['teardown_end_date']);
+  }
+  return new ValidationResult(true, $planned_arrival_date);
+}
+
+/**
+ * Validate the planned departure date
+ *
+ * @param int $planned_arrival_date
+ *          Unix timestamp
+ * @param int $planned_departure_date
+ *          Unix timestamp
+ * @return ValidationResult
+ */
+function User_validate_planned_departure_date($planned_arrival_date, $planned_departure_date) {
+  if ($planned_departure_date == null) {
+    // null is okay
+    return new ValidationResult(true, null);
+  }
+  if ($planned_arrival_date > $planned_departure_date) {
+    // departure cannot be before arrival
+    return new ValidationResult(false, $planned_arrival_date);
+  }
+  $event_config = EventConfig();
+  if ($event_config == null) {
+    // Nothing to validate against
+    return new ValidationResult(true, $planned_departure_date);
+  }
+  if (isset($event_config['buildup_start_date']) && $planned_departure_date < $event_config['buildup_start_date']) {
+    // Planned arrival can not be before buildup start date
+    return new ValidationResult(false, $event_config['buildup_start_date']);
+  }
+  if (isset($event_config['teardown_end_date']) && $planned_departure_date > $event_config['teardown_end_date']) {
+    // Planned arrival can not be after teardown end date
+    return new ValidationResult(false, $event_config['teardown_end_date']);
+  }
+  return new ValidationResult(true, $planned_departure_date);
+}
+
+/**
  * Returns user by id.
  *
  * @param $user_id UID          
@@ -165,24 +266,7 @@ function User_validate_Nick($nick) {
 function User($user_id) {
   $user_source = sql_select("SELECT * FROM `User` WHERE `UID`='" . sql_escape($user_id) . "' LIMIT 1");
   if ($user_source === false) {
-    return false;
-  }
-  if (count($user_source) > 0) {
-    return $user_source[0];
-  }
-  return null;
-}
-
-/**
- * TODO: Merge into normal user function
- * Returns user by id (limit informations.
- *
- * @param $user_id UID          
- */
-function mUser_Limit($user_id) {
-  $user_source = sql_select("SELECT `UID`, `Nick`, `Name`, `Vorname`, `Telefon`, `DECT`, `Handy`, `email`, `jabber` FROM `User` WHERE `UID`='" . sql_escape($user_id) . "' LIMIT 1");
-  if ($user_source === false) {
-    return false;
+    engelsystem_error("Unable to load user.");
   }
   if (count($user_source) > 0) {
     return $user_source[0];
@@ -200,7 +284,7 @@ function mUser_Limit($user_id) {
 function User_by_api_key($api_key) {
   $user = sql_select("SELECT * FROM `User` WHERE `api_key`='" . sql_escape($api_key) . "' LIMIT 1");
   if ($user === false) {
-    return false;
+    engelsystem_error("Unable to find user by api key.");
   }
   if (count($user) == 0) {
     return null;
@@ -217,7 +301,7 @@ function User_by_api_key($api_key) {
 function User_by_email($email) {
   $user = sql_select("SELECT * FROM `User` WHERE `email`='" . sql_escape($email) . "' LIMIT 1");
   if ($user === false) {
-    return false;
+    engelsystem_error("Unable to load user.");
   }
   if (count($user) == 0) {
     return null;
@@ -234,7 +318,7 @@ function User_by_email($email) {
 function User_by_password_recovery_token($token) {
   $user = sql_select("SELECT * FROM `User` WHERE `password_recovery_token`='" . sql_escape($token) . "' LIMIT 1");
   if ($user === false) {
-    return false;
+    engelsystem_error("Unable to load user.");
   }
   if (count($user) == 0) {
     return null;
@@ -267,7 +351,7 @@ function User_generate_password_recovery_token(&$user) {
   $user['password_recovery_token'] = md5($user['Nick'] . time() . rand());
   $result = sql_query("UPDATE `User` SET `password_recovery_token`='" . sql_escape($user['password_recovery_token']) . "' WHERE `UID`='" . sql_escape($user['UID']) . "' LIMIT 1");
   if ($result === false) {
-    return false;
+    engelsystem_error("Unable to generate password recovery token.");
   }
   engelsystem_log("Password recovery for " . User_Nick_render($user) . " started.");
   return $user['password_recovery_token'];

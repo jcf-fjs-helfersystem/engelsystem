@@ -9,6 +9,7 @@ $free_pages = [
     'credits',
     'ical',
     'login',
+    'rooms',
     'shifts',
     'shifts_json_export',
     'shifts_json_export_all',
@@ -68,6 +69,8 @@ if (isset($_REQUEST['p']) && preg_match("/^[a-z0-9_]*$/i", $_REQUEST['p']) && (i
     list($title, $content) = shifttypes_controller();
   } elseif ($page == "admin_event_config") {
     list($title, $content) = event_config_edit_controller();
+  } elseif ($page == "rooms") {
+    list($title, $content) = rooms_controller();
   } elseif ($page == "news") {
     $title = news_title();
     $content = user_news();
@@ -158,9 +161,6 @@ if (isset($_REQUEST['p']) && preg_match("/^[a-z0-9_]*$/i", $_REQUEST['p']) && (i
 }
 
 $event_config = EventConfig();
-if ($event_config === false) {
-  engelsystem_error("Unable to load event config.");
-}
 
 echo template_render('../templates/layout.html', [
     'theme' => isset($user) ? $user['color'] : $default_theme,

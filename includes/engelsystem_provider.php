@@ -5,6 +5,7 @@
 require_once realpath(__DIR__ . '/../includes/mysqli_provider.php');
 
 require_once realpath(__DIR__ . '/../includes/sys_auth.php');
+require_once realpath(__DIR__ . '/../includes/sys_form.php');
 require_once realpath(__DIR__ . '/../includes/sys_log.php');
 require_once realpath(__DIR__ . '/../includes/sys_menu.php');
 require_once realpath(__DIR__ . '/../includes/sys_page.php');
@@ -18,26 +19,35 @@ require_once realpath(__DIR__ . '/../includes/model/NeededAngelTypes_model.php')
 require_once realpath(__DIR__ . '/../includes/model/Room_model.php');
 require_once realpath(__DIR__ . '/../includes/model/ShiftEntry_model.php');
 require_once realpath(__DIR__ . '/../includes/model/Shifts_model.php');
+require_once realpath(__DIR__ . '/../includes/model/ShiftsFilter.php');
+require_once realpath(__DIR__ . '/../includes/model/ShiftSignupState.php');
 require_once realpath(__DIR__ . '/../includes/model/ShiftTypes_model.php');
 require_once realpath(__DIR__ . '/../includes/model/UserAngelTypes_model.php');
 require_once realpath(__DIR__ . '/../includes/model/UserDriverLicenses_model.php');
 require_once realpath(__DIR__ . '/../includes/model/UserGroups_model.php');
 require_once realpath(__DIR__ . '/../includes/model/User_model.php');
+require_once realpath(__DIR__ . '/../includes/model/ValidationResult.php');
 
 require_once realpath(__DIR__ . '/../includes/view/AngelTypes_view.php');
 require_once realpath(__DIR__ . '/../includes/view/EventConfig_view.php');
 require_once realpath(__DIR__ . '/../includes/view/Questions_view.php');
 require_once realpath(__DIR__ . '/../includes/view/Rooms_view.php');
+require_once realpath(__DIR__ . '/../includes/view/ShiftCalendarLane.php');
+require_once realpath(__DIR__ . '/../includes/view/ShiftCalendarRenderer.php');
+require_once realpath(__DIR__ . '/../includes/view/ShiftCalendarShiftRenderer.php');
+require_once realpath(__DIR__ . '/../includes/view/ShiftsFilterRenderer.php');
 require_once realpath(__DIR__ . '/../includes/view/Shifts_view.php');
 require_once realpath(__DIR__ . '/../includes/view/ShiftEntry_view.php');
 require_once realpath(__DIR__ . '/../includes/view/ShiftTypes_view.php');
 require_once realpath(__DIR__ . '/../includes/view/UserAngelTypes_view.php');
 require_once realpath(__DIR__ . '/../includes/view/UserDriverLicenses_view.php');
+require_once realpath(__DIR__ . '/../includes/view/UserHintsRenderer.php');
 require_once realpath(__DIR__ . '/../includes/view/User_view.php');
 
 require_once realpath(__DIR__ . '/../includes/controller/angeltypes_controller.php');
 require_once realpath(__DIR__ . '/../includes/controller/event_config_controller.php');
 require_once realpath(__DIR__ . '/../includes/controller/rooms_controller.php');
+require_once realpath(__DIR__ . '/../includes/controller/shift_entries_controller.php');
 require_once realpath(__DIR__ . '/../includes/controller/shifts_controller.php');
 require_once realpath(__DIR__ . '/../includes/controller/shifttypes_controller.php');
 require_once realpath(__DIR__ . '/../includes/controller/users_controller.php');

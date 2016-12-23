@@ -10,32 +10,92 @@ body {
   color: @text-muted;
 }
 
-#shifts {
-  td {
-    &.free {
-      border: 1px solid @brand-danger;
-      .bg-danger();
-    }
-    &.occupied {
-      border: 1px solid @brand-success;
-      .bg-success();
-    }
-    &.collides {
-      border: 1px solid @brand-warning;
-      .bg-warning();
-    }
-    &.own {
-      border: 1px solid @gray-light;
-    }
-  }
+.first {
+	margin-top: 30px;
 }
 
-.row-day {
-  border-top: 2px solid @gray-light;
+.text-big {
+	display: block;
+	font-size: 30px;
+	line-height: 30px;
+	margin: 0px;
 }
 
-.row-header {
-  min-width: 90px;
+.panel-primary .panel-heading a {
+  color: @panel-primary-text;
+}
+
+.panel-default .panel-heading a {
+  color: @panel-default-text;
+}
+
+.panel-info .panel-heading a {
+  color: @panel-info-text;
+}
+
+.panel-success .panel-heading a {
+  color: @panel-success-text;
+}
+
+.panel-warning .panel-heading a {
+  color: @panel-warning-text;
+}
+
+.panel-danger .panel-heading a {
+  color: @panel-danger-text;
+}
+
+.shift-calendar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-itmes: stretch;
+  width: 100%;
+  
+	.lane {
+	  background: @table-bg-accent;
+	  flex-grow: 1;
+	  min-width: 280px;
+	  width: 280px;
+	  flex-shrink: 1;
+	  
+		.header {
+		  background: @panel-bg;
+		  border-bottom: 1px solid @table-border-color;
+		  height: 30px;
+		  padding: 5px 5px 5px 16px;
+		}
+  
+	  .tick {
+	    height: 30px;
+	    border-top: 1px solid darken(@table-bg-accent, 2%);
+	  }
+    
+    .tick.hour {
+      border-top: 2px solid @table-border-color;
+      font-size: 0.9em;
+      padding-left: 5px;
+    }
+    
+    .tick.day {
+      border-top: 2px solid @brand-primary;
+      font-size: 0.9em;
+      padding-left: 5px;
+    }
+	}
+	
+	.lane.time {
+	  border-right: 1px solid @table-border-color;
+	  flex-grow: 0;
+	  min-width: 50px;
+	  width: 50px;
+	  flex-shrink: 0;
+	}
+	
+	.shift {
+	  margin: 0 5px 5px 0;
+	  overflow: hidden;
+	}
 }
 
 .space-top {

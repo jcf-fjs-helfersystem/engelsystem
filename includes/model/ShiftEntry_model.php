@@ -1,6 +1,22 @@
 <?php
 
 /**
+ * Returns an array with the attributes of shift entries.
+ * FIXME! Needs entity object.
+ */
+function ShiftEntry_new() {
+  return [
+      'id' => null,
+      'SID' => null,
+      'TID' => null,
+      'UID' => null,
+      'Comment' => null,
+      'freeloaded_comment' => null,
+      'freeloaded' => false 
+  ];
+}
+
+/**
  * Counts all freeloaded shifts.
  */
 function ShiftEntries_freeleaded_count() {
@@ -99,6 +115,7 @@ function ShiftEntries_finished_by_user($user) {
       JOIN `ShiftTypes` ON `ShiftTypes`.`id` = `Shifts`.`shifttype_id`
       WHERE `ShiftEntry`.`UID`=" . sql_escape($user['UID']) . "
       AND `Shifts`.`end` < " . sql_escape(time()) . "
+      AND `ShiftEntry`.`freeloaded` = 0
       ORDER BY `Shifts`.`end`
       ");
 }
@@ -110,12 +127,16 @@ function ShiftEntries_finished_by_user($user) {
  * @param int $angeltype_id          
  */
 function ShiftEntries_by_shift_and_angeltype($shift_id, $angeltype_id) {
-  return sql_select("
+  $result = sql_select("
       SELECT *
       FROM `ShiftEntry`
       WHERE `SID`=" . sql_escape($shift_id) . "
       AND `TID`=" . sql_escape($angeltype_id) . "
       ");
+  if ($result === false) {
+    engelsystem_error("Unable to load shift entries.");
+  }
+  return $result;
 }
 
 /**

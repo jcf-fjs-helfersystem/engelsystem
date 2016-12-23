@@ -28,21 +28,26 @@ function UserAngelType_exists($user, $angeltype) {
  * @param User $user          
  */
 function User_angeltypes($user) {
-  return sql_select("
-      SELECT `AngelTypes`.*, `UserAngelTypes`.`confirm_user_id`, `UserAngelTypes`.`coordinator`
+  $result = sql_select("
+      SELECT `AngelTypes`.*, `UserAngelTypes`.`confirm_user_id`, `UserAngelTypes`.`supporter`
       FROM `UserAngelTypes`
       JOIN `AngelTypes` ON `UserAngelTypes`.`angeltype_id` = `AngelTypes`.`id`
       WHERE `UserAngelTypes`.`user_id`='" . sql_escape($user['UID']) . "'
       ");
+  if ($result === false) {
+    engelsystem_error("Unable to load user angeltypes.");
+    return false;
+  }
+  return $result;
 }
 
 /**
- * Gets unconfirmed user angeltypes for angeltypes of which the given user is a coordinator.
+ * Gets unconfirmed user angeltypes for angeltypes of which the given user is a supporter.
  *
  * @param User $user          
  */
 function User_unconfirmed_AngelTypes($user) {
-  return sql_select("
+  $result = sql_select("
     SELECT 
       `UserAngelTypes`.*, 
       `AngelTypes`.`name`, 
@@ -51,41 +56,49 @@ function User_unconfirmed_AngelTypes($user) {
     JOIN `AngelTypes` ON `UserAngelTypes`.`angeltype_id`=`AngelTypes`.`id`
     JOIN `UserAngelTypes` as `UnconfirmedMembers` ON `UserAngelTypes`.`angeltype_id`=`UnconfirmedMembers`.`angeltype_id`
     WHERE `UserAngelTypes`.`user_id`='" . sql_escape($user['UID']) . "'
-      AND `UserAngelTypes`.`coordinator`=TRUE
+      AND `UserAngelTypes`.`supporter`=TRUE
       AND `AngelTypes`.`restricted`=TRUE
       AND `UnconfirmedMembers`.`confirm_user_id` IS NULL
     GROUP BY `UserAngelTypes`.`angeltype_id`
     ORDER BY `AngelTypes`.`name`");
+  if ($result === false) {
+    engelsystem_error("Unable to load user angeltypes.");
+  }
+  return $result;
 }
 
 /**
- * Returns true if user is angeltype coordinator or has privilege admin_user_angeltypes.
+ * Returns true if user is angeltype supporter or has privilege admin_user_angeltypes.
  *
  * @param User $user          
  * @param AngelType $angeltype          
  */
-function User_is_AngelType_coordinator($user, $angeltype) {
+function User_is_AngelType_supporter($user, $angeltype) {
   return (sql_num_query("
       SELECT `id` 
       FROM `UserAngelTypes` 
       WHERE `user_id`='" . sql_escape($user['UID']) . "'
       AND `angeltype_id`='" . sql_escape($angeltype['id']) . "'
-      AND `coordinator`=TRUE
+      AND `supporter`=TRUE
       LIMIT 1") > 0) || in_array('admin_user_angeltypes', privileges_for_user($user['UID']));
 }
 
 /**
- * Add or remove coordinator rights.
+ * Add or remove supporter rights.
  *
  * @param int $user_angeltype_id          
- * @param bool $coordinator          
+ * @param bool $supporter          
  */
-function UserAngelType_update($user_angeltype_id, $coordinator) {
-  return sql_query("
+function UserAngelType_update($user_angeltype_id, $supporter) {
+  $result = sql_query("
       UPDATE `UserAngelTypes`
-      SET `coordinator`=" . sql_bool($coordinator) . "
+      SET `supporter`=" . sql_bool($supporter) . "
       WHERE `id`='" . sql_escape($user_angeltype_id) . "'
       LIMIT 1");
+  if ($result === false) {
+    engelsystem_error("Unable to update supporter rights.");
+  }
+  return $result;
 }
 
 /**
@@ -94,10 +107,14 @@ function UserAngelType_update($user_angeltype_id, $coordinator) {
  * @param int $angeltype_id          
  */
 function UserAngelTypes_delete_all($angeltype_id) {
-  return sql_query("
+  $result = sql_query("
       DELETE FROM `UserAngelTypes`
       WHERE `angeltype_id`='" . sql_escape($angeltype_id) . "'
       AND `confirm_user_id` IS NULL");
+  if ($result === false) {
+    engelsystem_error("Unable to delete all unconfirmed users.");
+  }
+  return $result;
 }
 
 /**
@@ -107,11 +124,15 @@ function UserAngelTypes_delete_all($angeltype_id) {
  * @param User $confirm_user          
  */
 function UserAngelTypes_confirm_all($angeltype_id, $confirm_user) {
-  return sql_query("
+  $result = sql_query("
       UPDATE `UserAngelTypes`
       SET `confirm_user_id`='" . sql_escape($confirm_user['UID']) . "'
       WHERE `angeltype_id`='" . sql_escape($angeltype_id) . "'
       AND `confirm_user_id` IS NULL");
+  if ($result === false) {
+    engelsystem_error("Unable to confirm all users.");
+  }
+  return $result;
 }
 
 /**
@@ -121,11 +142,15 @@ function UserAngelTypes_confirm_all($angeltype_id, $confirm_user) {
  * @param User $confirm_user          
  */
 function UserAngelType_confirm($user_angeltype_id, $confirm_user) {
-  return sql_query("
+  $result = sql_query("
       UPDATE `UserAngelTypes`
       SET `confirm_user_id`='" . sql_escape($confirm_user['UID']) . "'
       WHERE `id`='" . sql_escape($user_angeltype_id) . "'
       LIMIT 1");
+  if ($result === false) {
+    engelsystem_error("Unable to confirm user angeltype.");
+  }
+  return $result;
 }
 
 /**
@@ -152,7 +177,7 @@ function UserAngelType_create($user, $angeltype) {
     `user_id`='" . sql_escape($user['UID']) . "',
     `angeltype_id`='" . sql_escape($angeltype['id']) . "'");
   if ($result === false) {
-    return false;
+    engelsystem_error("Unable to create user angeltype.");
   }
   return sql_id();
 }
@@ -169,7 +194,7 @@ function UserAngelType($user_angeltype_id) {
       WHERE `id`='" . sql_escape($user_angeltype_id) . "'
       LIMIT 1");
   if ($angeltype === false) {
-    return false;
+    engelsystem_error("Unable to load user angeltype.");
   }
   if (count($angeltype) == 0) {
     return null;
@@ -191,7 +216,7 @@ function UserAngelType_by_User_and_AngelType($user, $angeltype) {
       AND `angeltype_id`='" . sql_escape($angeltype['id']) . "'
       LIMIT 1");
   if ($angeltype === false) {
-    return false;
+    engelsystem_error("Unable to load user angeltype.");
   }
   if (count($angeltype) == 0) {
     return null;

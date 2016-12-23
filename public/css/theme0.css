@@ -6730,38 +6730,77 @@ body {
 .footer a {
   color: #777777;
 }
-#shifts td.free {
-  border: 1px solid #d9534f;
-  background-color: #f2dede;
+.first {
+  margin-top: 30px;
 }
-a#shifts td.free:hover,
-a#shifts td.free:focus {
-  background-color: #e4b9b9;
+.text-big {
+  display: block;
+  font-size: 30px;
+  line-height: 30px;
+  margin: 0px;
 }
-#shifts td.occupied {
-  border: 1px solid #5cb85c;
-  background-color: #dff0d8;
+.panel-primary .panel-heading a {
+  color: #ffffff;
 }
-a#shifts td.occupied:hover,
-a#shifts td.occupied:focus {
-  background-color: #c1e2b3;
+.panel-default .panel-heading a {
+  color: #333333;
 }
-#shifts td.collides {
-  border: 1px solid #f0ad4e;
-  background-color: #fcf8e3;
+.panel-info .panel-heading a {
+  color: #31708f;
 }
-a#shifts td.collides:hover,
-a#shifts td.collides:focus {
-  background-color: #f7ecb5;
+.panel-success .panel-heading a {
+  color: #3c763d;
 }
-#shifts td.own {
-  border: 1px solid #777777;
+.panel-warning .panel-heading a {
+  color: #8a6d3b;
 }
-.row-day {
-  border-top: 2px solid #777777;
+.panel-danger .panel-heading a {
+  color: #a94442;
 }
-.row-header {
-  min-width: 90px;
+.shift-calendar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-itmes: stretch;
+  width: 100%;
+}
+.shift-calendar .lane {
+  background: #f9f9f9;
+  flex-grow: 1;
+  min-width: 280px;
+  width: 280px;
+  flex-shrink: 1;
+}
+.shift-calendar .lane .header {
+  background: #ffffff;
+  border-bottom: 1px solid #dddddd;
+  height: 30px;
+  padding: 5px 5px 5px 16px;
+}
+.shift-calendar .lane .tick {
+  height: 30px;
+  border-top: 1px solid #f4f4f4;
+}
+.shift-calendar .lane .tick.hour {
+  border-top: 2px solid #dddddd;
+  font-size: 0.9em;
+  padding-left: 5px;
+}
+.shift-calendar .lane .tick.day {
+  border-top: 2px solid #337ab7;
+  font-size: 0.9em;
+  padding-left: 5px;
+}
+.shift-calendar .lane.time {
+  border-right: 1px solid #dddddd;
+  flex-grow: 0;
+  min-width: 50px;
+  width: 50px;
+  flex-shrink: 0;
+}
+.shift-calendar .shift {
+  margin: 0 5px 5px 0;
+  overflow: hidden;
 }
 .space-top {
   margin-top: 15px;

@@ -4,18 +4,23 @@ function admin_questions_title() {
   return _("Answer questions");
 }
 
+/**
+ * Renders a hint for new questions to answer.
+ */
 function admin_new_questions() {
-  global $privileges;
+  global $privileges, $page;
   
-  if (in_array("admin_questions", $privileges)) {
-    $new_messages = sql_num_query("SELECT * FROM `Questions` WHERE `AID` IS NULL");
-    
-    if ($new_messages > 0) {
-      return info('<a href="' . page_link_to("admin_questions") . '">' . _('There are unanswered questions!') . '</a>', true);
+  if ($page != "admin_questions") {
+    if (in_array("admin_questions", $privileges)) {
+      $new_messages = sql_num_query("SELECT * FROM `Questions` WHERE `AID` IS NULL");
+      
+      if ($new_messages > 0) {
+        return '<a href="' . page_link_to("admin_questions") . '">' . _('There are unanswered questions!') . '</a>';
+      }
     }
   }
   
-  return "";
+  return null;
 }
 
 function admin_questions() {
@@ -26,9 +31,6 @@ function admin_questions() {
     $questions = sql_select("SELECT * FROM `Questions` WHERE `AID` IS NULL");
     foreach ($questions as $question) {
       $user_source = User($question['UID']);
-      if ($user_source === false) {
-        engelsystem_error("Unable to load user.");
-      }
       
       $unanswered_questions_table[] = [
           'from' => User_Nick_render($user_source),
@@ -45,14 +47,7 @@ function admin_questions() {
     $questions = sql_select("SELECT * FROM `Questions` WHERE NOT `AID` IS NULL");
     foreach ($questions as $question) {
       $user_source = User($question['UID']);
-      if ($user_source === false) {
-        engelsystem_error("Unable to load user.");
-      }
-      
       $answer_user_source = User($question['AID']);
-      if ($answer_user_source === false) {
-        engelsystem_error("Unable to load user.");
-      }
       $answered_questions_table[] = [
           'from' => User_Nick_render($user_source),
           'question' => str_replace("\n", "<br />", $question['Question']),

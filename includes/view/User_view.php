@@ -20,6 +20,66 @@ $tshirt_sizes = [
 ];
 
 /**
+ * Renders user settings page
+ *
+ * @param User $user_source
+ *          The user
+ * @param array<String> $locales
+ *          Available languages
+ * @param array<String> $themes
+ *          Available themes
+ */
+function User_settings_view($user_source, $locales, $themes, $buildup_start_date, $teardown_end_date, $enable_tshirt_size, $tshirt_sizes) {
+  return page_with_title(settings_title(), [
+      msg(),
+      div('row', [
+          div('col-md-6', [
+              form([
+                  form_info('', _("Here you can change your user details.")),
+                  form_info(entry_required() . ' = ' . _("Entry required!")),
+                  form_text('nick', _("Nick"), $user_source['Nick'], true),
+                  form_text('lastname', _("Last name"), $user_source['Name']),
+                  form_text('prename', _("First name"), $user_source['Vorname']),
+                  form_date('planned_arrival_date', _("Planned date of arrival") . ' ' . entry_required(), $user_source['planned_arrival_date'], $buildup_start_date, $teardown_end_date),
+                  form_date('planned_departure_date', _("Planned date of departure"), $user_source['planned_departure_date'], $buildup_start_date, $teardown_end_date),
+                  form_text('age', _("Age"), $user_source['Alter']),
+                  form_text('tel', _("Phone"), $user_source['Telefon']),
+                  form_text('dect', _("DECT"), $user_source['DECT']),
+                  form_text('mobile', _("Mobile"), $user_source['Handy']),
+                  form_text('mail', _("E-Mail") . ' ' . entry_required(), $user_source['email']),
+                  form_checkbox('email_shiftinfo', _("The engelsystem is allowed to send me an email (e.g. when my shifts change)"), $user_source['email_shiftinfo']),
+                  form_checkbox('email_by_human_allowed', _("Humans are allowed to send me an email (e.g. for ticket vouchers)"), $user_source['email_by_human_allowed']),
+                  form_text('jabber', _("Jabber"), $user_source['jabber']),
+                  form_text('hometown', _("Hometown"), $user_source['Hometown']),
+                  $enable_tshirt_size ? form_select('tshirt_size', _("Shirt size"), $tshirt_sizes, $user_source['Size']) : '',
+                  form_info('', _('Please visit the angeltypes page to manage your angeltypes.')),
+                  form_submit('submit', _("Save")) 
+              ]) 
+          ]),
+          div('col-md-6', [
+              form([
+                  form_info(_("Here you can change your password.")),
+                  form_password('password', _("Old password:")),
+                  form_password('new_password', _("New password:")),
+                  form_password('new_password2', _("Password confirmation:")),
+                  form_submit('submit_password', _("Save")) 
+              ]),
+              form([
+                  form_info(_("Here you can choose your color settings:")),
+                  form_select('theme', _("Color settings:"), $themes, $user_source['color']),
+                  form_submit('submit_theme', _("Save")) 
+              ]),
+              form([
+                  form_info(_("Here you can choose your language:")),
+                  form_select('language', _("Language:"), $locales, $user_source['Sprache']),
+                  form_submit('submit_language', _("Save")) 
+              ]) 
+          ]) 
+      ]) 
+  ]);
+}
+
+/**
  * Displays the welcome message to the user and shows a login form.
  */
 function User_registration_success_view($event_welcome_message) {
@@ -114,40 +174,41 @@ function Users_view($users, $order_by, $arrived_count, $active_count, $force_act
       'actions' => '<strong>' . count($users) . '</strong>' 
   ];
   
-  return page_with_title(_('All users'), [
+  return page_with_title(_("All users"), [
       msg(),
       buttons([
-          button(page_link_to('register'), glyph('plus') . _('New user')) 
+          button(page_link_to('register'), glyph('plus') . _("New user")) 
       ]),
-      $enable_dect ? table([
-          'Nick' => Users_table_header_link('Nick', _('Login-Name'), $order_by),
-          'Vorname' => Users_table_header_link('Vorname', _('Prename'), $order_by),
-          'Name' => Users_table_header_link('Name', _('Name'), $order_by),
-          'DECT' => Users_table_header_link('DECT', _('DECT'), $order_by),
-          'Gekommen' => Users_table_header_link('Gekommen', _('Arrived'), $order_by),
-          'got_voucher' => Users_table_header_link('got_voucher', _('Voucher'), $order_by),
+      table([
+          'Nick' => Users_table_header_link('Nick', _("Login-Name"), $order_by),
+          'Vorname' => Users_table_header_link('Vorname', _("Prename"), $order_by),
+          'Name' => Users_table_header_link('Name', _("Name"), $order_by),
+          'DECT' => Users_table_header_link('DECT', _("DECT"), $order_by),
+          'Gekommen' => Users_table_header_link('Gekommen', _("Arrived"), $order_by),
+          'got_voucher' => Users_table_header_link('got_voucher', _("Voucher"), $order_by),
           'freeloads' => _('Freeloads'),
-          'Aktiv' => Users_table_header_link('Aktiv', _('Active'), $order_by),
-          'force_active' => Users_table_header_link('force_active', _('Forced'), $order_by),
-          'Tshirt' => Users_table_header_link('Tshirt', _('T-Shirt'), $order_by),
-          'Size' => Users_table_header_link('Size', _('Size'), $order_by),
-          'lastLogIn' => Users_table_header_link('lastLogIn', _('Last login'), $order_by),
+          'Aktiv' => Users_table_header_link('Aktiv', _("Active"), $order_by),
+          'force_active' => Users_table_header_link('force_active', _("Forced"), $order_by),
+          'Tshirt' => Users_table_header_link('Tshirt', _("T-Shirt"), $order_by),
+          'Size' => Users_table_header_link('Size', _("Size"), $order_by),
+          'lastLogIn' => Users_table_header_link('lastLogIn', _("Last login"), $order_by),
           'actions' => '' 
         ], $users)
       :
         table([
-          'Nick' => Users_table_header_link('Nick', _('Login-Name'), $order_by),
-          'Vorname' => Users_table_header_link('Vorname', _('Prename'), $order_by),
-          'Name' => Users_table_header_link('Name', _('Name'), $order_by),
-          'Gekommen' => Users_table_header_link('Gekommen', _('Arrived'), $order_by),
-          'got_voucher' => Users_table_header_link('got_voucher', _('Voucher'), $order_by),
+          'Nick' => Users_table_header_link('Nick', _("Login-Name"), $order_by),
+          'Vorname' => Users_table_header_link('Vorname', _("Prename"), $order_by),
+          'Name' => Users_table_header_link('Name', _("Name"), $order_by),
+          'DECT' => Users_table_header_link('DECT', _("DECT"), $order_by),
+          'Gekommen' => Users_table_header_link('Gekommen', _("Arrived"), $order_by),
+          'got_voucher' => Users_table_header_link('got_voucher', _("Voucher"), $order_by),
           'freeloads' => _('Freeloads'),
-          'Aktiv' => Users_table_header_link('Aktiv', _('Active'), $order_by),
-          'force_active' => Users_table_header_link('force_active', _('Forced'), $order_by),
-          'Tshirt' => Users_table_header_link('Tshirt', _('T-Shirt'), $order_by),
-          'Size' => Users_table_header_link('Size', _('Size'), $order_by),
-          'lastLogIn' => Users_table_header_link('lastLogIn', _('Last login'), $order_by),
-          'actions' => ''
+          'Aktiv' => Users_table_header_link('Aktiv', _("Active"), $order_by),
+          'force_active' => Users_table_header_link('force_active', _("Forced"), $order_by),
+          'Tshirt' => Users_table_header_link('Tshirt', _("T-Shirt"), $order_by),
+          'Size' => Users_table_header_link('Size', _("Size"), $order_by),
+          'lastLogIn' => Users_table_header_link('lastLogIn', _("Last login"), $order_by),
+          'actions' => '' 
         ], $users)
   ]);
 }
@@ -180,67 +241,83 @@ function User_shift_state_render($user) {
   return '<span class="text-danger moment-countdown" data-timestamp="' . $upcoming_shifts[0]['end'] . '">' . _("Shift ends %c") . '</span>';
 }
 
-function User_view($user_source, $admin_user_privilege, $freeloader, $user_angeltypes, $user_groups, $shifts, $its_me) {
+function User_view_shiftentries($needed_angel_type) {
+  $shift_info = '<br><b>' . $needed_angel_type['name'] . ':</b> ';
+  
+  $shift_entries = [];
+  foreach ($needed_angel_type['users'] as $user_shift) {
+    $member = User_Nick_render($user_shift);
+    if ($user_shift['freeloaded']) {
+      $member = '<strike>' . $member . '</strike>';
+    }
+    
+    $shift_entries[] = $member;
+  }
+  $shift_info .= join(", ", $shift_entries);
+  
+  return $shift_info;
+}
+
+/**
+ * Helper that renders a shift line for user view
+ */
+function User_view_myshift($shift, $user_source, $its_me) {
   global $LETZTES_AUSTRAGEN, $privileges;
   
-  $user_name = htmlspecialchars($user_source['Vorname']) . " " . htmlspecialchars($user_source['Name']);
+  $shift_info = '<a href="' . shift_link($shift) . '">' . $shift['name'] . '</a>';
+  if ($shift['title']) {
+    $shift_info .= '<br /><a href="' . shift_link($shift) . '">' . $shift['title'] . '</a>';
+  }
+  foreach ($shift['needed_angeltypes'] as $needed_angel_type) {
+    $shift_info .= User_view_shiftentries($needed_angel_type);
+  }
   
+  $myshift = [
+      'date' => date("Y-m-d", $shift['start']),
+      'time' => date("H:i", $shift['start']) . ' - ' . date("H:i", $shift['end']),
+      'room' => $shift['Name'],
+      'shift_info' => $shift_info,
+      'comment' => $shift['Comment'] 
+  ];
+  
+  if ($shift['freeloaded']) {
+    if (in_array("user_shifts_admin", $privileges)) {
+      $myshift['comment'] .= '<br /><p class="error">' . _("Freeloaded") . ': ' . $shift['freeload_comment'] . '</p>';
+    } else {
+      $myshift['comment'] .= '<br /><p class="error">' . _("Freeloaded") . '</p>';
+    }
+  }
+  
+  $myshift['actions'] = [
+      button(shift_link($shift), glyph('eye-open') . _('view'), 'btn-xs') 
+  ];
+  if ($its_me || in_array('user_shifts_admin', $privileges)) {
+    $myshift['actions'][] = button(page_link_to('user_myshifts') . '&edit=' . $shift['id'] . '&id=' . $user_source['UID'], glyph('edit') . _('edit'), 'btn-xs');
+  }
+  if (($shift['start'] > time() + $LETZTES_AUSTRAGEN * 3600) || in_array('user_shifts_admin', $privileges)) {
+    $myshift['actions'][] = button(page_link_to('user_myshifts') . ((! $its_me) ? '&id=' . $user_source['UID'] : '') . '&cancel=' . $shift['id'], glyph('trash') . _('sign off'), 'btn-xs');
+  }
+  $myshift['actions'] = table_buttons($myshift['actions']);
+  
+  return $myshift;
+}
+
+/**
+ * Helper that prepares the shift table for user view
+ */
+function User_view_myshifts($shifts, $user_source, $its_me) {
   $myshifts_table = [];
   $timesum = 0;
   foreach ($shifts as $shift) {
-    $shift_info = '<a href="' . shift_link($shift) . '">' . $shift['name'] . '</a>';
-    if ($shift['title']) {
-      $shift_info .= '<br /><a href="' . shift_link($shift) . '">' . $shift['title'] . '</a>';
-    }
-    foreach ($shift['needed_angeltypes'] as $needed_angel_type) {
-      $shift_info .= '<br><b>' . $needed_angel_type['name'] . ':</b> ';
-      
-      $shift_entries = [];
-      foreach ($needed_angel_type['users'] as $user_shift) {
-        $member = User_Nick_render($user_shift);
-        if ($user_shift['freeloaded']) {
-          $member = '<strike>' . $member . '</strike>';
-        }
-        
-        $shift_entries[] = $member;
-      }
-      $shift_info .= join(", ", $shift_entries);
-    }
-    
-    $myshift = [
-        'date' => date("Y-m-d", $shift['start']),
-        'time' => date("H:i", $shift['start']) . ' - ' . date("H:i", $shift['end']),
-        'room' => $shift['Name'],
-        'shift_info' => $shift_info,
-        'comment' => $shift['Comment'] 
-    ];
-    
-    if ($shift['freeloaded']) {
-      if (in_array("user_shifts_admin", $privileges)) {
-        $myshift['comment'] .= '<br /><p class="error">' . _("Freeloaded") . ': ' . $shift['freeload_comment'] . '</p>';
-      } else {
-        $myshift['comment'] .= '<br /><p class="error">' . _("Freeloaded") . '</p>';
-      }
-    }
-    
-    $myshift['actions'] = [
-        button(shift_link($shift), glyph('eye-open') . _('view'), 'btn-xs') 
-    ];
-    if ($its_me || in_array('user_shifts_admin', $privileges)) {
-      $myshift['actions'][] = button(page_link_to('user_myshifts') . '&edit=' . $shift['id'] . '&id=' . $user_source['UID'], glyph('edit') . _('edit'), 'btn-xs');
-    }
-    if (($shift['start'] > time() + $LETZTES_AUSTRAGEN * 3600) || in_array('user_shifts_admin', $privileges)) {
-      $myshift['actions'][] = button(page_link_to('user_myshifts') . ((! $its_me) ? '&id=' . $user_source['UID'] : '') . '&cancel=' . $shift['id'], glyph('trash') . _('sign off'), 'btn-xs');
-    }
-    $myshift['actions'] = table_buttons($myshift['actions']);
+    $myshifts_table[] = User_view_myshift($shift, $user_source, $its_me);
     
     if ($shift['freeloaded']) {
       $timesum += (- 2 * ($shift['end'] - $shift['start']));
     } else {
       $timesum += ($shift['end'] - $shift['start']);
     }
-    $myshifts_table[] = $myshift;
   }
+  
   if (count($myshifts_table) > 0) {
     $myshifts_table[] = [
         'date' => '<b>' . _("Sum:") . '</b>',
@@ -251,9 +328,32 @@ function User_view($user_source, $admin_user_privilege, $freeloader, $user_angel
         'actions' => "" 
     ];
   }
+  return $myshifts_table;
+}
+
+/**
+ * Renders view for a single user
+ */
+function User_view($user_source, $admin_user_privilege, $freeloader, $user_angeltypes, $user_groups, $shifts, $its_me) {
+  $user_name = htmlspecialchars($user_source['Vorname']) . " " . htmlspecialchars($user_source['Name']);
+  $myshifts_table = User_view_myshifts($shifts, $user_source, $its_me);
   
   return page_with_title('<span class="icon-icon_angel"></span> ' . htmlspecialchars($user_source['Nick']) . ' <small>' . $user_name . '</small>', [
       msg(),
+      div('row space-top', [
+          div('col-md-12', [
+              buttons([
+                  $admin_user_privilege ? button(page_link_to('admin_user') . '&id=' . $user_source['UID'], glyph("edit") . _("edit")) : '',
+                  $admin_user_privilege ? button(user_driver_license_edit_link($user_source), glyph("road") . _("driving license")) : '',
+                  ($admin_user_privilege && ! $user_source['Gekommen']) ? button(page_link_to('admin_arrive') . '&arrived=' . $user_source['UID'], _("arrived")) : '',
+                  $admin_user_privilege ? button(page_link_to('users') . '&action=edit_vouchers&user_id=' . $user_source['UID'], glyph('cutlery') . _('Edit vouchers')) : '',
+                  $its_me ? button(page_link_to('user_settings'), glyph('list-alt') . _("Settings")) : '',
+                  $its_me ? button(page_link_to('ical') . '&key=' . $user_source['api_key'], glyph('calendar') . _("iCal Export")) : '',
+                  $its_me ? button(page_link_to('shifts_json_export') . '&key=' . $user_source['api_key'], glyph('export') . _("JSON Export")) : '',
+                  $its_me ? button(page_link_to('user_myshifts') . '&reset', glyph('repeat') . _('Reset API key')) : '' 
+              ]) 
+          ]) 
+      ]),
       div('row', [
           div('col-md-3', [
               '<h1>',
@@ -277,20 +377,6 @@ function User_view($user_source, $admin_user_privilege, $freeloader, $user_angel
           div('col-md-3', [
               '<h4>' . _("Rights") . '</h4>',
               User_groups_render($user_groups) 
-          ]) 
-      ]),
-      div('row space-top', [
-          div('col-md-12', [
-              buttons([
-                  $admin_user_privilege ? button(page_link_to('admin_user') . '&id=' . $user_source['UID'], glyph("edit") . _("edit")) : '',
-                  $admin_user_privilege ? button(user_driver_license_edit_link($user_source), glyph("road") . _("driving license")) : '',
-                  ($admin_user_privilege && ! $user_source['Gekommen']) ? button(page_link_to('admin_arrive') . '&arrived=' . $user_source['UID'], _("arrived")) : '',
-                  $admin_user_privilege ? button(page_link_to('users') . '&action=edit_vouchers&user_id=' . $user_source['UID'], glyph('cutlery') . _('Edit vouchers')) : '',
-                  $its_me ? button(page_link_to('user_settings'), glyph('list-alt') . _("Settings")) : '',
-                  $its_me ? button(page_link_to('ical') . '&key=' . $user_source['api_key'], glyph('calendar') . _("iCal Export")) : '',
-                  $its_me ? button(page_link_to('shifts_json_export') . '&key=' . $user_source['api_key'], glyph('export') . _("JSON Export")) : '',
-                  $its_me ? button(page_link_to('user_myshifts') . '&reset', glyph('repeat') . _('Reset API key')) : '' 
-              ]) 
           ]) 
       ]),
       ($its_me || $admin_user_privilege) ? '<h2>' . _("Shifts") . '</h2>' : '',
@@ -349,7 +435,7 @@ function User_angeltypes_render($user_angeltypes) {
     } else {
       $class = 'text-success';
     }
-    $output[] = '<a href="' . angeltype_link($angeltype['id']) . '" class="' . $class . '">' . ($angeltype['coordinator'] ? glyph('education') : '') . $angeltype['name'] . '</a>';
+    $output[] = '<a href="' . angeltype_link($angeltype['id']) . '" class="' . $class . '">' . ($angeltype['supporter'] ? glyph('education') : '') . $angeltype['name'] . '</a>';
   }
   return join('<br />', $output);
 }
@@ -370,6 +456,57 @@ function User_groups_render($user_groups) {
  */
 function User_Nick_render($user_source) {
   return '<a class="' . ($user_source['Gekommen'] ? '' : 'text-muted') . '" href="' . page_link_to('users') . '&amp;action=view&amp;user_id=' . $user_source['UID'] . '"><span class="icon-icon_angel"></span> ' . htmlspecialchars($user_source['Nick']) . '</a>';
+}
+
+function render_user_departure_date_hint() {
+  global $user;
+  
+  if (! isset($user['planned_departure_date']) || $user['planned_departure_date'] == null) {
+    return _("Please enter your planned date of departure on your settings page to give us a feeling for teardown capacities.");
+  }
+  
+  return null;
+}
+
+function render_user_freeloader_hint() {
+  global $user, $max_freeloadable_shifts;
+  
+  if (User_is_freeloader($user)) {
+    return sprintf(_("You freeloaded at least %s shifts. Shift signup is locked. Please go to heavens desk to be unlocked again."), $max_freeloadable_shifts);
+  }
+  
+  return null;
+}
+
+// Hinweis für Engel, die noch nicht angekommen sind
+function render_user_arrived_hint() {
+  global $user;
+  
+  if ($user['Gekommen'] == 0) {
+    return _("You are not marked as arrived. Please go to heaven's desk, get your angel badge and/or tell them that you arrived already.");
+  }
+  
+  return null;
+}
+
+function render_user_tshirt_hint() {
+  global $enable_tshirt_size, $user;
+  
+  if ($enable_tshirt_size && $user['Size'] == "") {
+    return _("You need to specify a tshirt size in your settings!");
+  }
+  
+  return null;
+}
+
+function render_user_dect_hint() {
+  global $user;
+  
+  if ($user['DECT'] == "") {
+    return _("You need to specify a DECT phone number in your settings! If you don't have a DECT phone, just enter \"-\".");
+  }
+  
+  return null;
 }
 
 ?>
