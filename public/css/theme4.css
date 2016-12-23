@@ -6987,3 +6987,13 @@ a.thumbnail.active {
 .jumbotron h6 {
   color: #fff;
 }
+.label-warning,
+.label-success,
+.progress-bar-warning,
+.progress-bar-success,
+.panel-warning .panel-heading,
+.panel-warning .panel-heading a,
+.panel-success .panel-heading,
+.panel-success .panel-heading a {
+  color: #222222;
+}
