@@ -24,7 +24,7 @@ function Shift_collides($shift, $shifts) {
  * @param array<Shift> $user_shifts          
  */
 function Shift_signup_allowed($shift, $angeltype, $user_angeltype = null, $user_shifts = null) {
-  global $user, $privileges;
+  global $user, $privileges, $enable_noself_signup;
   
   if ($user_shifts == null) {
     $user_shifts = Shifts_by_user($user);
@@ -87,9 +87,17 @@ function Shift_signup_allowed($shift, $angeltype, $user_angeltype = null, $user_
   
   // User shift admins may join anybody in every shift
   $user_may_join_shift |= in_array('user_shifts_admin', $privileges);
-  
-  return $user_may_join_shift;
+
+if ($enable_noself_signup) { 
+if (in_array('user_shifts_admin', $privileges)) {
+	$user_may_join_shift = true;
+} else {
+	$user_may_join_shift = false;
 }
+}
+
+  return $user_may_join_shift;
+  }
 
 /**
  * Delete a shift by its external id.
