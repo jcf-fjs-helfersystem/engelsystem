@@ -16,7 +16,7 @@ $default_theme = 4;
 $DISPLAY_NEWS = 6;
 
 // Anzahl Stunden bis zum Austragen eigener Schichten
-$LETZTES_AUSTRAGEN = 3;
+$LETZTES_AUSTRAGEN = 3000;
 
 // Setzt den zu verwendenden Crypto-Algorismus (entsprechend der Dokumentation von crypt()).
 // Falls ein Benutzerpasswort in einem anderen Format gespeichert ist,
