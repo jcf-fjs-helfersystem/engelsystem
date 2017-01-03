@@ -47,6 +47,7 @@ $enable_Hometown = false;
 $enable_age = false;
 $enable_phone = false;
 $enable_unnecessary_Notifications = false;
+$enable_noself_signup = true;
 
 // Number of shifts to freeload until angel is locked for shift signup.
 $max_freeloadable_shifts = 2;
