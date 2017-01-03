@@ -32,7 +32,7 @@ function user_atom() {
 function make_atom_entries_from_news($news_entries) {
   $html = '<?xml version="1.0" encoding="utf-8"?>
   <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Engelsystem</title>
+  <title>Helfersystem</title>
   <id>' . $_SERVER['HTTP_HOST'] . htmlspecialchars(preg_replace('#[&?]key=[a-f0-9]{32}#', '', $_SERVER['REQUEST_URI'])) . '</id>
   <updated>' . date('Y-m-d\TH:i:sP', $news_entries[0]['Datum']) . "</updated>\n";
   foreach ($news_entries as $news_entry) {
