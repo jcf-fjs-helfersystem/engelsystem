@@ -5,7 +5,7 @@ function shifts_title() {
 }
 
 function user_shifts() {
-  global $user, $privileges;
+  global $user, $privileges, $enable_noself_signup;
   
   if (User_is_freeloader($user)) {
     redirect(page_link_to('user_myshifts'));
@@ -353,8 +353,8 @@ function user_shifts() {
 }
 
 function view_user_shifts() {
-  global $user, $privileges;
-  global $ical_shifts;
+  global $user, $privileges, $enable_noself_signup;
+  global $ical_shifts, $enable_noself_signup;
   
   $ical_shifts = [];
   $days = sql_select_single_col("
@@ -688,6 +688,23 @@ function view_user_shifts() {
                     
                     // User shift admins may join anybody in every shift
                     $user_may_join_shift |= in_array('user_shifts_admin', $privileges);
+				if ($enable_noself_signup) {
+					if (in_array('user_shifts_admin', $privileges)) {
+                      $entry_list[] = '<a href="' . page_link_to('user_shifts') . '&amp;shift_id=' . $shift['SID'] . '&amp;type_id=' . $angeltype['id'] . '">' . $inner_text . '</a> ' . button(page_link_to('user_shifts') . '&amp;shift_id=' . $shift['SID'] . '&amp;type_id=' . $angeltype['id'], _('Sign up'), 'btn-xs');
+                    } else {
+                      if (time() > $shift['start']) {
+                        $entry_list[] = $inner_text . ' (' . _('ended') . ')';
+                      } elseif ($angeltype['restricted'] == 1 && isset($angeltype['user_id']) && ! isset($angeltype['confirm_user_id'])) {
+                        $entry_list[] = $inner_text . glyph('lock');
+                      } elseif ($angeltype['restricted'] == 1) {
+                        $entry_list[] = $inner_text;
+                      } elseif ($collides) {
+                        $entry_list[] = $inner_text;
+                      } else {
+                        $entry_list[] = $inner_text;
+                      }
+                    }
+					} else {
                     if ($user_may_join_shift) {
                       $entry_list[] = '<a href="' . page_link_to('user_shifts') . '&amp;shift_id=' . $shift['SID'] . '&amp;type_id=' . $angeltype['id'] . '">' . $inner_text . '</a> ' . button(page_link_to('user_shifts') . '&amp;shift_id=' . $shift['SID'] . '&amp;type_id=' . $angeltype['id'], _('Sign up'), 'btn-xs');
                     } else {
@@ -702,7 +719,9 @@ function view_user_shifts() {
                       } else {
                         $entry_list[] = $inner_text . '<br />' . button(page_link_to('user_angeltypes') . '&action=add&angeltype_id=' . $angeltype['id'], sprintf(_('Become %s'), $angeltype['name']), 'btn-xs');
                       }
-                    }
+                    }						
+					}
+                  
                     
                     unset($inner_text);
                     $is_free = true;
@@ -835,18 +854,42 @@ function view_user_shifts() {
             
             // User shift admins may join anybody in every shift
             $user_may_join_shift |= in_array('user_shifts_admin', $privileges);
-            if ($user_may_join_shift) {
-              $entry_list[] = '<a href="' . page_link_to('user_shifts') . '&amp;shift_id=' . $shift['SID'] . '&amp;type_id=' . $angeltype['id'] . '">' . $inner_text . ' &raquo;</a>';
-            } else {
-              if (time() > $shift['end']) {
-                $entry_list[] = $inner_text . ' (vorbei)';
-              } elseif ($angeltype['restricted'] == 1 && isset($angeltype['user_id']) && ! isset($angeltype['confirm_user_id'])) {
-                $entry_list[] = $inner_text . glyph("lock");
-              } else {
-                $entry_list[] = $inner_text . ' <a href="' . page_link_to('user_angeltypes') . '&action=add&angeltype_id=' . $angeltype['id'] . '">' . sprintf(_('Become %s'), $angeltype['name']) . '</a>';
-              }
-            }
-            
+
+				if ($enable_noself_signup) {
+					if (in_array('user_shifts_admin', $privileges)) {
+                      $entry_list[] = '<a href="' . page_link_to('user_shifts') . '&amp;shift_id=' . $shift['SID'] . '&amp;type_id=' . $angeltype['id'] . '">' . $inner_text . '</a> ' . button(page_link_to('user_shifts') . '&amp;shift_id=' . $shift['SID'] . '&amp;type_id=' . $angeltype['id'], _('Sign up'), 'btn-xs');
+                    } else {
+                      if (time() > $shift['start']) {
+                        $entry_list[] = $inner_text . ' (' . _('ended') . ')';
+                      } elseif ($angeltype['restricted'] == 1 && isset($angeltype['user_id']) && ! isset($angeltype['confirm_user_id'])) {
+                        $entry_list[] = $inner_text . glyph('lock');
+                      } elseif ($angeltype['restricted'] == 1) {
+                        $entry_list[] = $inner_text;
+                      } elseif ($collides) {
+                        $entry_list[] = $inner_text;
+                      } else {
+                        $entry_list[] = $inner_text;
+                      }
+                    }
+					} else {
+                    if ($user_may_join_shift) {
+                      $entry_list[] = '<a href="' . page_link_to('user_shifts') . '&amp;shift_id=' . $shift['SID'] . '&amp;type_id=' . $angeltype['id'] . '">' . $inner_text . '</a> ' . button(page_link_to('user_shifts') . '&amp;shift_id=' . $shift['SID'] . '&amp;type_id=' . $angeltype['id'], _('Sign up'), 'btn-xs');
+                    } else {
+                      if (time() > $shift['start']) {
+                        $entry_list[] = $inner_text . ' (' . _('ended') . ')';
+                      } elseif ($angeltype['restricted'] == 1 && isset($angeltype['user_id']) && ! isset($angeltype['confirm_user_id'])) {
+                        $entry_list[] = $inner_text . glyph('lock');
+                      } elseif ($angeltype['restricted'] == 1) {
+                        $entry_list[] = $inner_text;
+                      } elseif ($collides) {
+                        $entry_list[] = $inner_text;
+                      } else {
+                        $entry_list[] = $inner_text . '<br />' . button(page_link_to('user_angeltypes') . '&action=add&angeltype_id=' . $angeltype['id'], sprintf(_('Become %s'), $angeltype['name']), 'btn-xs');
+                      }
+                    }						
+					}
+                  
+			
             unset($inner_text);
             $is_free = true;
           }
