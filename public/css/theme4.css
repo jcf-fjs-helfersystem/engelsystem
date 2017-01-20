@@ -1361,28 +1361,28 @@ a.text-primary:focus {
 }
 a.text-success:hover,
 a.text-success:focus {
-  color: #0b6139;
+  color: #e6e6e6;
 }
 .text-info {
   color: #ffffff;
 }
 a.text-info:hover,
 a.text-info:focus {
-  color: #0b6139;
+  color: #e6e6e6;
 }
 .text-warning {
   color: #ffffff;
 }
 a.text-warning:hover,
 a.text-warning:focus {
-  color: #0b6139;
+  color: #e6e6e6;
 }
 .text-danger {
   color: #ffffff;
 }
 a.text-danger:hover,
 a.text-danger:focus {
-  color: #0b6139;
+  color: #e6e6e6;
 }
 .bg-primary {
   color: #fff;
@@ -3991,7 +3991,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav > li > a {
   position: relative;
   display: block;
-  padding: 10px 10px;
+  padding: 10px 15px;
 }
 .nav > li > a:hover,
 .nav > li > a:focus {
@@ -6770,15 +6770,16 @@ a#shifts td.occupied:focus {
   background-color: #449d44;
 }
 #shifts td.collides {
-  border: 1px solid #f0ad4e;
-  background-color: #f0ad4e;
+  border: 2px solid #000000; 
+  background-color: #FF8787;
 }
 a#shifts td.collides:hover,
 a#shifts td.collides:focus {
   background-color: #ec971f;
 }
 #shifts td.own {
-  border: 1px solid #010101;
+  border: 2px solid #010101;
+  background-color: #81D742;
 }
 .row-day {
   border-top: 2px solid #010101;
